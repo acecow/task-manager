@@ -8,6 +8,34 @@
     <script type="module" src="./script.js"></script>
 </head>
 <body>
-    
+    <main>
+        <hgroup>
+            <h1>Task manager</h1>
+            <p>by acecow</p>
+        </hgroup>
+
+        <nav class="switch">
+            <a>task list</a><a>new task</a>
+        </nav>
+
+        <section class="taskPage">
+            <h2>Tasks</h2>
+            <nav class="filters">
+                <a>all</a><a>in process</a><a>finished</a>
+            </nav>
+
+            <ul class="tasks">
+            </ul>
+        </section>
+        
+        <section class="createTask hidden">
+            <form>
+                <h2>New task</h2>
+                <input id="taskTitle" placeholder="Task's title" type="text" required>
+                <textarea id="descriptionOfTask" placeholder="Description"></textarea>
+                <button id="createNewTask">Create task</button>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
