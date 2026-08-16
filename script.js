@@ -1,19 +1,19 @@
 const CURRENT_STATE = initialize();
 function initialize() {
     if (localStorage.length === 0) {
-    const INITIAL_STATE = {
-        taskList: [
-        ]
+        const INITIAL_STATE = {
+            taskList: [
+            ]
+        };
+        localStorage.setItem("userData", JSON.stringify(INITIAL_STATE));
+        return INITIAL_STATE;
+    } else {
+        const INITIAL_STATE = JSON.parse(
+            localStorage.getItem("userData")
+        );
+        console.log(INITIAL_STATE);
+        return INITIAL_STATE;
     }
-    localStorage.setItem("userData", JSON.stringify(INITIAL_STATE));
-    return INITIAL_STATE
-} else {
-    const INITIAL_STATE = JSON.parse(
-        localStorage.getItem("userData")
-    );
-    console.log(INITIAL_STATE);
-    return INITIAL_STATE
-}
 }
 
 
@@ -24,40 +24,43 @@ function updateStorage() {
 
 function taskRender(condition) { // I'll do filters(conditions) later
     
-    document.querySelector(".tasks").innerHTML = ''
+    document.querySelector(".tasks").innerHTML = '';
 
-    const allTasks = []
+    const allTasks = [];
     const length = CURRENT_STATE.taskList.length;
 
     for (let i = 0; i < length; i++) {
 
-        const li = document.createElement('li')
-        const container = document.createElement('div')
-        const completeBox = document.createElement('input')
+        const li = document.createElement('li');
+        const container = document.createElement('div');
+        const checkButton = document.createElement('input');
 
-        const currentTask = CURRENT_STATE.taskList[i]
-        completeBox.type = 'checkbox'
-        completeBox.className = 'checkButton'
-        completeBox.addEventListener('change', changeStatus)        
+        const currentTask = CURRENT_STATE.taskList[i];
+        checkButton.type = 'checkbox';
+        checkButton.className = 'checkButton';
+        checkButton.addEventListener('change', changeStatus) ;       
 
         if (CURRENT_STATE.taskList[i].isCompleted) {
-            completeBox.setAttribute('checked', 'checked')
-            container.setAttribute('class', 'completed')
+            checkButton.setAttribute('checked', 'checked');
+            container.setAttribute('class', 'completed');
         }
 
         li.dataset.id = currentTask.taskID;
         li.dataset.isCompleted = currentTask.isCompleted
 
-        const deleteButton = document.createElement('button')
+        const deletionButton = document.createElement('button');
+        deletionButton.className = 'deletionButton';
+        deletionButton.addEventListener('click', deleteTask)
+        deletionButton.textContent = '✕'
 
-        const title = document.createElement('h3')
-        title.textContent = `- ${currentTask.title}`;
+        const title = document.createElement('h3');
+        title.textContent = `${currentTask.title}`;
 
         const description = document.createElement('p')
         description.textContent = `${currentTask.description}`;
 
         container.append(title, description)
-        li.append(container, completeBox)
+        li.append(container, checkButton, deletionButton)
 
         allTasks.push(li);
     }
@@ -88,6 +91,14 @@ function changeStatus(event) {
     const taskIndex = CURRENT_STATE.taskList.findIndex((element) => element.taskID === taskID);
     CURRENT_STATE.taskList[taskIndex].isCompleted = !CURRENT_STATE.taskList[taskIndex].isCompleted;
     updateStorage()
+    taskRender();
+}
+
+function deleteTask(event) {
+    const taskID = event.target.parentElement.dataset.id;
+    const taskIndex = CURRENT_STATE.taskList.findIndex((element) => element.taskID === taskID);
+    CURRENT_STATE.taskList.splice(taskIndex, 1)
+    updateStorage();
     taskRender();
 }
 
