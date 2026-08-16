@@ -1,29 +1,6 @@
 let CURRENT_STATE;
 
-function updateStorage() {
-    localStorage.setItem("userData", JSON.stringify(CURRENT_STATE));
-}
-
-function taskRender(condition) { // I'll do filters(conditions) later
-    const allTasks = []
-    const length = CURRENT_STATE.taskList.length;
-    for (let i = 0; i < length; i++) {
-        const currentTask = CURRENT_STATE.taskList[i]
-        const li = document.createElement('li')
-        li.dataset.id = i;
-        li.dataset.isCompleted = currentTask.isCompleted
-        const title = document.createElement('h3')
-        title.textContent = `- ${currentTask.title}`;
-        const description = document.createElement('p')
-        description.textContent = `${currentTask.description}`;
-        li.append(title, description)
-        allTasks.push(li);
-    }
-    document.querySelector(".tasks").append(...allTasks)
-}
-
 if (localStorage.length === 0) {
-    console.log('empty');
     CURRENT_STATE = {
         taskList: [
         ]
@@ -36,16 +13,61 @@ if (localStorage.length === 0) {
     console.log(CURRENT_STATE);
 }
 
+function updateStorage() {
+    localStorage.setItem("userData", JSON.stringify(CURRENT_STATE));
+}
+
+function taskRender(condition) { // I'll do filters(conditions) later
+    
+    document.querySelector(".tasks").innerHTML = ''
+
+    const allTasks = []
+    const length = CURRENT_STATE.taskList.length;
+
+    for (let i = 0; i < length; i++) {
+
+        const li = document.createElement('li')
+        const container = document.createElement('div')
+        const completeBox = document.createElement('input')
+
+        completeBox.type = 'checkbox'
+        completeBox.className = 'checkButton'
+        completeBox.addEventListener('change', changeStatus)
+
+        const currentTask = CURRENT_STATE.taskList[i]
+
+        if (CURRENT_STATE.taskList[i].isCompleted) {
+            completeBox.setAttribute('checked', 'checked')
+            container.setAttribute('class', 'completed')
+        }
+
+        li.dataset.id = currentTask.taskID;
+        li.dataset.isCompleted = currentTask.isCompleted
+
+        const title = document.createElement('h3')
+        title.textContent = `- ${currentTask.title}`;
+
+        const description = document.createElement('p')
+        description.textContent = `${currentTask.description}`;
+
+        container.append(title, description)
+        li.append(container, completeBox)
+
+        allTasks.push(li);
+    }
+    document.querySelector(".tasks").append(...allTasks)
+}
+
 class Task {
     constructor(title, description) {
-        this.taskID = CURRENT_STATE.taskList.length;
+        this.taskID = crypto.randomUUID();
         this.title = title;
         this.description = description;
         this.isCompleted = false;
     }
 }
 
-function createTask() {
+function createTask(event) {
     let taskName = document.querySelector("#taskTitle").value;
     let taskDescription = document.querySelector("#descriptionOfTask").value;
     const taskObj = new Task(taskName, taskDescription);
@@ -55,7 +77,15 @@ function createTask() {
     taskRender();
 }
 
+function changeStatus(event) {
+    const taskID = event.target.parentElement.dataset.id;
+    const taskIndex = CURRENT_STATE.taskList.findIndex((element) => element.taskID === taskID);
+    CURRENT_STATE.taskList[taskIndex].isCompleted = !CURRENT_STATE.taskList[taskIndex].isCompleted;
+    updateStorage()
+    taskRender();
+}
+
 const creationButton = document.querySelector("#createNewTask");
-creationButton.addEventListener("click", createTask);
+creationButton.addEventListener('click', createTask);
 
 taskRender();
