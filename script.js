@@ -1,17 +1,22 @@
-let CURRENT_STATE;
-
-if (localStorage.length === 0) {
-    CURRENT_STATE = {
+const CURRENT_STATE = initialize();
+function initialize() {
+    if (localStorage.length === 0) {
+    const INITIAL_STATE = {
         taskList: [
         ]
     }
-    updateStorage();
+    localStorage.setItem("userData", JSON.stringify(INITIAL_STATE));
+    return INITIAL_STATE
 } else {
-    CURRENT_STATE = JSON.parse(
+    const INITIAL_STATE = JSON.parse(
         localStorage.getItem("userData")
     );
-    console.log(CURRENT_STATE);
+    console.log(INITIAL_STATE);
+    return INITIAL_STATE
 }
+}
+
+
 
 function updateStorage() {
     localStorage.setItem("userData", JSON.stringify(CURRENT_STATE));
@@ -30,11 +35,10 @@ function taskRender(condition) { // I'll do filters(conditions) later
         const container = document.createElement('div')
         const completeBox = document.createElement('input')
 
+        const currentTask = CURRENT_STATE.taskList[i]
         completeBox.type = 'checkbox'
         completeBox.className = 'checkButton'
-        completeBox.addEventListener('change', changeStatus)
-
-        const currentTask = CURRENT_STATE.taskList[i]
+        completeBox.addEventListener('change', changeStatus)        
 
         if (CURRENT_STATE.taskList[i].isCompleted) {
             completeBox.setAttribute('checked', 'checked')
@@ -43,6 +47,8 @@ function taskRender(condition) { // I'll do filters(conditions) later
 
         li.dataset.id = currentTask.taskID;
         li.dataset.isCompleted = currentTask.isCompleted
+
+        const deleteButton = document.createElement('button')
 
         const title = document.createElement('h3')
         title.textContent = `- ${currentTask.title}`;
@@ -68,8 +74,8 @@ class Task {
 }
 
 function createTask(event) {
-    let taskName = document.querySelector("#taskTitle").value;
-    let taskDescription = document.querySelector("#descriptionOfTask").value;
+    let taskName = document.querySelector('#taskTitle').value;
+    let taskDescription = document.querySelector('#descriptionOfTask').value;
     const taskObj = new Task(taskName, taskDescription);
     CURRENT_STATE.taskList.push(taskObj);
     console.log(taskName, taskDescription);
@@ -85,7 +91,7 @@ function changeStatus(event) {
     taskRender();
 }
 
-const creationButton = document.querySelector("form");
+const creationButton = document.querySelector('form');
 creationButton.addEventListener('submit', createTask);
 
 taskRender();
