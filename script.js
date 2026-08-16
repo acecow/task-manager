@@ -85,7 +85,7 @@ function changeStatus(event) {
     taskRender();
 }
 
-const creationButton = document.querySelector("#createNewTask");
-creationButton.addEventListener('click', createTask);
+const creationButton = document.querySelector("form");
+creationButton.addEventListener('submit', createTask);
 
 taskRender();
