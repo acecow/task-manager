@@ -1,15 +1,15 @@
 const CURRENT_STATE = initialize();
 function initialize() {
-    if (localStorage.length === 0) {
+    if (!localStorage.getItem("userDataTMBA")) {
         const INITIAL_STATE = {
             taskList: [
             ]
         };
-        localStorage.setItem("userData", JSON.stringify(INITIAL_STATE));
+        updateStorage(true, INITIAL_STATE);
         return INITIAL_STATE;
     } else {
         const INITIAL_STATE = JSON.parse(
-            localStorage.getItem("userData")
+            localStorage.getItem("userDataTMBA")
         );
         console.log(INITIAL_STATE);
         return INITIAL_STATE;
@@ -18,8 +18,13 @@ function initialize() {
 
 
 
-function updateStorage() {
-    localStorage.setItem("userData", JSON.stringify(CURRENT_STATE));
+function updateStorage(isInitial, initialStateVar) {
+    if (isInitial) {
+        localStorage.setItem("userDataTMBA", JSON.stringify(initialStateVar));
+    } else {
+        localStorage.setItem("userDataTMBA", JSON.stringify(CURRENT_STATE));
+    }
+    
 }
 
 function taskRender(condition) { // I'll do filters(conditions) later
@@ -53,6 +58,11 @@ function taskRender(condition) { // I'll do filters(conditions) later
         deletionButton.addEventListener('click', deleteTask)
         deletionButton.textContent = '✕'
 
+        const editionButton = document.createElement('button');
+        editionButton.className = 'editionButton';
+        editionButton.addEventListener('click', editTask)
+        editionButton.textContent = '✎'
+
         const title = document.createElement('h3');
         title.textContent = `${currentTask.title}`;
 
@@ -60,7 +70,7 @@ function taskRender(condition) { // I'll do filters(conditions) later
         description.textContent = `${currentTask.description}`;
 
         container.append(title, description)
-        li.append(container, checkButton, deletionButton)
+        li.append(container, checkButton, editionButton,deletionButton)
 
         allTasks.push(li);
     }
@@ -100,6 +110,10 @@ function deleteTask(event) {
     CURRENT_STATE.taskList.splice(taskIndex, 1)
     updateStorage();
     taskRender();
+}
+
+function editTask() {
+    
 }
 
 const creationButton = document.querySelector('form');
