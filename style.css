@@ -47,14 +47,6 @@ hgroup {
     flex-direction: column;
 }
 
-.switch a {
-    border: 1px solid black;
-}
-
-.switch a, .filters a {
-    padding: 1rem;
-}
-
 .tasks {
     height: calc(100dvh / 3);
     overflow: scroll;
@@ -66,7 +58,12 @@ li {
     align-items: center;
     gap: 1rem;
     border-top: 1px solid black;
-    padding: 0.25rem;
+    padding: 0.5rem;
+}
+
+li div {
+    display: flex;
+    flex-direction: column;
 }
 
 .completed {

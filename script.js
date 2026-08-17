@@ -1,4 +1,6 @@
 const CURRENT_STATE = initialize();
+
+
 function initialize() {
     if (!localStorage.getItem("userDataTMBA")) {
         const INITIAL_STATE = {
@@ -15,8 +17,6 @@ function initialize() {
         return INITIAL_STATE;
     }
 }
-
-
 
 function updateStorage(isInitial, initialStateVar) {
     if (isInitial) {
@@ -112,8 +112,31 @@ function deleteTask(event) {
     taskRender();
 }
 
-function editTask() {
+function editTask(event) {
+    const taskID = event.target.parentElement.dataset.id;
+    const taskIndex = CURRENT_STATE.taskList.findIndex((element) => element.taskID === taskID);
+
+    const li = event.target.parentElement;
+
+    const oldh3 = li.querySelector('h3');
+    const oldp = li.querySelector('p');
+
+    const newTitle = document.createElement('input');
+    newTitle.type = 'text';
+    newTitle.value = oldh3.textContent;
+    const newDescription = document.createElement('textarea');
+    newDescription.textContent = oldp.textContent;
     
+    oldh3.replaceWith(newTitle)
+    oldp.replaceWith(newDescription)
+
+    event.target.removeEventListener('click', editTask)
+    event.target.addEventListener('click', () => {
+        CURRENT_STATE.taskList[taskIndex].title = newTitle.value;
+        CURRENT_STATE.taskList[taskIndex].description = newDescription.value;
+        updateStorage();
+        taskRender();
+    });
 }
 
 const creationButton = document.querySelector('form');

@@ -15,14 +15,21 @@
         </hgroup>
 
         <nav class="switch">
-            <a>task list</a><a>new task</a>
+            <label for="taskPage">
+                <input type="radio" name="page" value="taskPage" id="taskPage" checked>
+                <span>task list</span>
+            </label>
+            <label for="creationPage">
+                <input type="radio" name="page" value="taskPage" id="creationPage">
+                <span>new task</span>
+            </label>
         </nav>
 
         <section class="taskPage">
             <h2>Tasks</h2>
             <nav class="filters">
                 <label for="all">
-                    <input type="radio" name="filter" value="all" id="all">
+                    <input type="radio" name="filter" value="all" id="all" checked>
                     <span>all</span>
                 </label>
                 <label for="inProcess">
