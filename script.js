@@ -1,5 +1,13 @@
 const CURRENT_STATE = initialize();
 
+class Task {
+    constructor(title, description) {
+        this.taskID = crypto.randomUUID();
+        this.title = title;
+        this.description = description;
+        this.isCompleted = false;
+    }
+}
 
 function initialize() {
     if (!localStorage.getItem("userDataTMBA")) {
@@ -27,7 +35,7 @@ function updateStorage(isInitial, initialStateVar) {
     
 }
 
-function taskRender(condition) { // I'll do filters(conditions) later
+function taskRender() {
     
     document.querySelector(".tasks").innerHTML = '';
 
@@ -77,15 +85,6 @@ function taskRender(condition) { // I'll do filters(conditions) later
     document.querySelector(".tasks").append(...allTasks)
 }
 
-class Task {
-    constructor(title, description) {
-        this.taskID = crypto.randomUUID();
-        this.title = title;
-        this.description = description;
-        this.isCompleted = false;
-    }
-}
-
 function createTask(event) {
     let taskName = document.querySelector('#taskTitle').value;
     let taskDescription = document.querySelector('#descriptionOfTask').value;
@@ -100,7 +99,7 @@ function changeStatus(event) {
     const taskID = event.target.parentElement.dataset.id;
     const taskIndex = CURRENT_STATE.taskList.findIndex((element) => element.taskID === taskID);
     CURRENT_STATE.taskList[taskIndex].isCompleted = !CURRENT_STATE.taskList[taskIndex].isCompleted;
-    updateStorage()
+    updateStorage();
     taskRender();
 }
 
@@ -139,7 +138,52 @@ function editTask(event) {
     });
 }
 
+function switchPages() {
+    const taskPage = document.querySelector('.taskPage');
+    const creationPage = document.querySelector('.createTask');
+    [taskPage, creationPage].forEach(element => {
+        element.classList.toggle('hidden')
+    });
+}
+
+function filterTasks(event) {
+    const filter = event.target.value;
+    console.log(filter)
+    const tasks = document.querySelectorAll('.tasks li')
+    if (filter === 'inProcess') {
+        tasks.forEach(element => {
+            if (element.dataset.isCompleted === 'true') {
+                element.classList.add('hidden')
+            } else {
+                element.classList.remove('hidden')
+            }
+        });
+    } else if (filter === 'completed') {
+        tasks.forEach(element => {
+            if (element.dataset.isCompleted === 'false') {
+                element.classList.add('hidden')
+            } else {
+                element.classList.remove('hidden')
+            }
+        });
+    } else {
+        tasks.forEach(element => {
+            element.classList.remove('hidden')
+        });
+    }
+}
+
 const creationButton = document.querySelector('form');
 creationButton.addEventListener('submit', createTask);
+
+const pageButtons = document.querySelectorAll('.switch input');
+pageButtons.forEach(element => {
+    element.addEventListener('change', switchPages);
+});
+
+const filterButtons = document.querySelectorAll('.filters input');
+filterButtons.forEach(element => {
+    element.addEventListener('change', filterTasks)
+});
 
 taskRender();
